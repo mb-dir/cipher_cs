@@ -104,13 +104,18 @@ print("Zaszyfrowany tekst: ", encrypt_txt[:30])
 decrypt_txt = decrypt(alf_polybius, key_polybius, encrypt_txt, key)
 print("Odszyfrowany tekst: ", decrypt_txt[:30])
 
-
 def generate_random_key():
     number = str(random.randint(100, 999))
 
     return [number, key[1]]
 
 def generate_random_key_2():
+    # 5 bo tyle wynosi długość drugiego składnika klucza
+    permutation = ''.join(random.sample(alf, 5))
+
+    return [key[0], permutation]
+
+def generate_random_key_3():
     number = str(random.randint(100, 999))
     # 5 bo tyle wynosi długość drugiego składnika klucza
     permutation = ''.join(random.sample(alf, 5))
@@ -122,11 +127,15 @@ def auto_attack(alf, alf_polybius, txt):
     t0 = time.time()
     best_score, result, key = -99999999, "", []
 
-    while time.time() - t0 < 10:
+    while time.time() - t0 < 20:
         # Generuj klucz (randomowa pierwsza część)
-        temp_key = generate_random_key()
-        # Generuj pełny klucz
+        # temp_key = generate_random_key()
+
+        # Generuj klucz (randomowa druga część)
         # temp_key = generate_random_key_2()
+
+        # Generuj pełny klucz
+        temp_key = generate_random_key_3()
 
         # Na podstawie wygenerowanego klucza utwórz tablice polibeusza z kluczem
         temp_key_polybius = [[] for i in range(5)]
@@ -161,7 +170,8 @@ def auto_attack(alf, alf_polybius, txt):
             best_score = sc
             result = temp_decrypt
             key = temp_key
-        return [result, best_score, key]
+
+    return [result, best_score, key]
 
 
 Scorer = ngram('english_bigrams.txt', sep=' ')
